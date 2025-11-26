@@ -5,6 +5,10 @@ import threading
 import utils
 import exeptions
 
+'''
+resources: https://github.com/UniversalRobots/URScript_Examples/blob/main/socket-server/hmi-example.py
+'''
+
 UDP_IP = '0.0.0.0'
 
 class ColossusClient:
@@ -21,16 +25,16 @@ class ColossusClient:
         except socket.gaierror:
             raise ValueError(f"Could not resolve hostname: {self.arm_host}")
         
-        self.video_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)        # UDP socket for video
+        self.video_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)        # TCP socket for video
         self.command_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)     # TCP socket for commands
-        self.states_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)       # UDP socket for states
+        self.states_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)       # TCP socket for states
         self._running = False
 
     def connect(self):
         try:
             self.command_socket.connect((self.arm_host, self.command_port))
-            self.video_socket.connect((UDP_IP, self.video_port))
-            self.states_socket.connect((UDP_IP, self.states_port))
+            self.video_socket.connect((self.arm_host, self.video_port))
+            self.states_socket.connect((self.arm_host, self.states_port))
         
         except socket.error as e:
             raise ConnectionError(f"Failed to connect to Colossus arm: {e}")
@@ -62,14 +66,21 @@ class ColossusClient:
             self.states_socket.close()
         return
     
-    def receive_video(self):
+    def receive_frame(self):
+        chunk_size = 8192
         while self._running:
-            break
+            length_bytes = self.video_socket.recv(4)
+
+            if self.running is False:
+                break
         return
     
     def receive_states(self):
         while self._running:
-            break
+
+
+            if self.running is False:
+                break
         return
     
     def send_command(self, command, space, rt):
@@ -84,4 +95,3 @@ class ColossusClient:
 class GuiClient(ColossusClient):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        

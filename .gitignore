@@ -1,3 +1,6 @@
 .venv
 .vscode
 .sdkvenv
+colossus_sdk/__pycache__
+tests/__pycache__
+.pytest_cache
