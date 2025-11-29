@@ -1,7 +1,10 @@
 import numpy as np
 import json as js
 import sys
-sys.path.append("/home/matth/Desktop/Colossus/Software/src/codi")
+from pathlib import Path as pth
+
+ROOT = pth().resolve().parents[1]
+sys.path.append(ROOT)
 
 import src.codi.utils as ut
 
